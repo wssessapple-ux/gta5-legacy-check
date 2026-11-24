@@ -7,6 +7,8 @@
 
 适用场景：GTA V 老版本（1.0.463.1 一类），装了 ScriptHookV、ASI Loader、OpenIV、修改器之后，**进游戏没反应 / 按 F3 没菜单 / 一加载就崩**，又不知道是哪一环出的问题。
 
+**不想看代码？** 去 [Releases](https://github.com/wssessapple-ux/gta5-legacy-check/releases/latest) 下 `gta5-legacy-check-v0.3.0.zip`，解压到任意文件夹，然后把游戏目录拖到 `Check-GTA.cmd` 上。
+
 **不会命令行？双击就行：**
 
 - **`Check-GTA.cmd`** —— 把游戏文件夹拖上去，或者双击后在窗口里粘贴路径，回车。
