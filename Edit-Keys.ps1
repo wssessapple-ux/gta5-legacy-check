@@ -1,4 +1,4 @@
-#requires -Version 5.1
+﻿#requires -Version 5.1
 <#
   trainerv.ini 按键编辑器（Simple Trainer 1.9 系列）
   - 图形界面：选一行 → 按你想绑的键 → 保存（自动备份 .bak，只改等号右边的数字）
@@ -88,17 +88,22 @@ function ConvertTo-KeyCode([string]$s) {
 }
 
 # ---------- 定位 ini ----------
+if (-not $Ini -and $GameDir) { $Ini = Join-Path $GameDir 'trainerv.ini' }
 if (-not $Ini) {
-    if ($GameDir) {
-        $Ini = Join-Path $GameDir 'trainerv.ini'
+    $local = Join-Path $PSScriptRoot 'trainerv.ini'
+    if (Test-Path -LiteralPath $local) {
+        $Ini = $local
     } else {
-        $cand = @((Join-Path $PSScriptRoot 'trainerv.ini'), 'E:\vip\GTAV\trainerv.ini') |
-                Where-Object { Test-Path -LiteralPath $_ }
-        $Ini = $cand | Select-Object -First 1
+        Write-Host ''
+        Write-Host '  trainerv.ini 按键编辑器' -ForegroundColor Cyan
+        Write-Host '  把 trainerv.ini 拖进这个窗口再回车，或输入完整路径。' -ForegroundColor Gray
+        Write-Host '  文件就在游戏根目录，和 GTA5.exe 放一起。' -ForegroundColor Gray
+        Write-Host ''
+        $Ini = (Read-Host '  trainerv.ini 路径').Trim().Trim('"').Trim("'")
     }
 }
 if (-not $Ini -or -not (Test-Path -LiteralPath $Ini)) {
-    Write-Host "找不到 trainerv.ini，用 -Ini 指定路径。" -ForegroundColor Red
+    Write-Host ("找不到 trainerv.ini：{0}" -f $Ini) -ForegroundColor Red
     exit 2
 }
 $Ini = (Resolve-Path -LiteralPath $Ini).Path

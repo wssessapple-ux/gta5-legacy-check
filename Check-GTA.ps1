@@ -17,7 +17,23 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-if (-not $GameDir) { throw '请用 -GameDir 指定游戏目录（含 GTA5.exe 的那个文件夹）' }
+# 没给目录时自己问，省得玩家去学命令行
+if (-not $GameDir) {
+    Write-Host ''
+    Write-Host '  GTA5 老版本环境体检' -ForegroundColor Cyan
+    Write-Host '  把游戏文件夹拖进这个窗口再回车，或者直接输入路径。' -ForegroundColor Gray
+    Write-Host '  一般是含 GTA5.exe 的那个目录，例如 D:\Games\Grand Theft Auto V' -ForegroundColor Gray
+    Write-Host ''
+    $GameDir = (Read-Host '  游戏目录').Trim().Trim('"').Trim("'")
+}
+if (-not $GameDir) {
+    Write-Host '没给目录，退出。' -ForegroundColor Yellow
+    exit 2
+}
+if (-not (Test-Path -LiteralPath $GameDir)) {
+    Write-Host ("目录不存在：{0}" -f $GameDir) -ForegroundColor Red
+    exit 2
+}
 $GameDir = (Resolve-Path -LiteralPath $GameDir).Path
 
 $checks = New-Object System.Collections.Generic.List[object]
