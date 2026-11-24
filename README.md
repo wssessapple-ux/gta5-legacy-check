@@ -1,6 +1,9 @@
-# GTA5 老版本环境体检
+# GTA5 老版本环境体检 + Simple Trainer 按键编辑器
 
-一个 PowerShell 脚本，把你游戏目录里「版本对不上、必备文件缺失」的坑一次性列清楚。
+两个 PowerShell 脚本：
+
+- **`Check-GTA.ps1`** —— 扫游戏目录，把「版本对不上、必备文件缺失」一次列清楚。
+- **`Edit-Keys.ps1`** —— 给 `trainerv.ini` 换键：列表里选一行，按一下键盘就绑上，不会改坏其它内容。
 
 适用场景：GTA V 老版本（1.0.463.1 一类），装了 ScriptHookV、ASI Loader、OpenIV、修改器之后，**进游戏没反应 / 按 F3 没菜单 / 一加载就崩**，又不知道是哪一环出的问题。
 
@@ -24,6 +27,25 @@ pwsh -File Check-GTA.ps1 -GameDir 'D:\Games\Grand Theft Auto V'
 | ScriptHookV.log | 是否存在 | 崩了之后这是第一手线索 |
 
 脚本不验哈希、不写文件、不联网——只读游戏目录。
+
+## 按键编辑器 Edit-Keys.ps1
+
+`trainerv.ini` 的按键全是 VK 十进制码（`MenuKey=114 //F3`），手改要查码表，还容易把注释和制表符搞坏。这个脚本只动 `[KeyBindings]` 段里等号右边那个数字。
+
+```
+pwsh -File Edit-Keys.ps1 -Ini 'D:\Games\Grand Theft Auto V\trainerv.ini'     # 开界面
+pwsh -File Edit-Keys.ps1 -Ini ... -List                                      # 出表（117 项）
+pwsh -File Edit-Keys.ps1 -Ini ... -Check                                     # 查共用键
+pwsh -File Edit-Keys.ps1 -Ini ... -Set 'MenuKey=F4;MenuKeyCancel=Escape'      # 命令行直接改
+```
+
+界面里双击一行 → 弹「请按键」→ 按下去就绑上，黄色是未保存、红色是你改出来的冲突，保存前自动写 `trainerv.ini.bak`。
+
+几个踩过的坑都写进脚本了：
+
+- **写回保字节**：读原文拿换行符，用系统默认编码（GBK）写，测过 28438 字节的 ini 改一行后仍是 28438 字节，注释和制表符一个没动。
+- **手柄项单独处理**：`Controller*` 存的是手柄码（201=A、202=B、187/188/189/190=十字键），不是键盘码。键盘 VK 里的 187/188/189 恰好是 `=` `,` `-`，混着翻译会彻底误导人，所以这类项改成手填数字。
+- **共用键不当冲突报**：原版里 `LAlt`、`K`、`J` 是组合键前缀，小键盘 `96–105` 被菜单和一堆功能按上下文共用，全标冲突等于噪音。默认只报「你改出来的冲突」，`-Check` 才列出全部共用组。
 
 ## 版本矩阵
 
